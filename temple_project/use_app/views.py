@@ -283,7 +283,6 @@ def validate_people_all_date(request):
 
 
 def year(x):
-    print(x)
     time = date.today()
     fix = 0
     if time.month >= 10:
@@ -292,8 +291,6 @@ def year(x):
     old =(int(time.year) - 1911 + fix) - int(x[0])
     if not int(x[1]) >= 2 and int(x[2]) >= 30:
         old -= 1
-
-    print(old)
     return abs(old)
 
 
@@ -704,6 +701,7 @@ def reture_solar(x, y, z):
                                       m=true_time.solarMonth,
                                       d=true_time.solarDay)
     return x
+
 @django.template.defaulttags.register.filter
 def BeautifyDateStr(value):
     arr=value.split("-")
@@ -794,9 +792,9 @@ def validate_submit(request):
         for c in x["z"]:
             c["address"] = Home.objects.get(home_phone=c["address"]).address
         if date.today().month >= 10:
-            x["year"] = twelve(int(date.today().year) + 1)
+            x["year"] = twelve(int(date.today().year) + 1-1911)
         else:
-            x["year"] = twelve(date.today().year)
+            x["year"] = twelve(date.today().year-1911)
 
         x["title"] = request.GET.get("title", None)
         # print(os.path.join(BASE_DIR, "files" ,"files","mode1.docx"))
