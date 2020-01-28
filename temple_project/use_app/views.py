@@ -289,9 +289,12 @@ def year(x):
         fix = 1
    
     old =(int(time.year) - 1911 + fix) - int(x[0])
-    if int(x[1]) == 1:
-        if int(x[2]) < 12:
-            old += 1
+    if int(x[1]) == 1:# 判斷1月有沒有過
+        if int(x[2]) > 12:
+            old -= 1
+    else:#其他月直接-1
+        old -= 1
+
     return abs(old)
 
 
