@@ -289,8 +289,9 @@ def year(x):
         fix = 1
    
     old =(int(time.year) - 1911 + fix) - int(x[0])
-    if not (int(x[1]) >= 1 and int(x[2]) >= 12):
-        old -= 1
+    if int(x[1]) == 1:
+        if int(x[2]) < 12:
+            old += 1
     return abs(old)
 
 
