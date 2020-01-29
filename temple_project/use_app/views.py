@@ -4,20 +4,16 @@ from dateutil.relativedelta import relativedelta
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, render_to_response, redirect
 from django.http import JsonResponse
 from .forms import homeform, peopleform, activity_form, choose_form, login_form, fix_peopleform
-
 from .models import Home, People_data, activity_data, history_data
-#try
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import auth
 from django.urls import reverse
 from mailmerge import MailMerge
 from django.contrib.auth import logout
-from django.urls import reverse
 import os
 import json
 from django.contrib.auth.decorators import login_required
 from django.template.defaultfilters import stringfilter
-import comtypes.client
 import time
 
 from docxtpl import DocxTemplate
@@ -266,13 +262,13 @@ def validate_people_all_date(request):
     try:
         for i in range(len(the_data)):
             date = the_data[i].birthday.split("-")
-         
+
             output = the_data[i].name + " 本命 " + twelve(int(
                 date[0])) + " 年 " + time_chinese(int(
                     date[1])) + " 月 " + time_chinese(
                         int(date[2])) + " 號 " + "  生行庚 " + time_chinese(
                             year(date)) + " 歲 "
-            
+
             get_allname_array.append(the_data[i].name + "|" + output + "|" +
                                      "F")
     except Exception as e:
@@ -287,7 +283,7 @@ def year(x):
     fix = 0
     if time.month >= 10:
         fix = 1
-   
+
     old =(int(time.year) - 1911 + fix) - int(x[0])
     if int(x[1]) == 1:# 判斷1月有沒有過
         if int(x[2]) > 12:
@@ -770,9 +766,9 @@ def people_form(request, pk):
                     use_bug += get_all_name[i] + " "
             form = peopleform(None)
             if use_bug != "":
-                use_bug = "名字重複的名單有:" + use_bug  
+                use_bug = "名字重複的名單有:" + use_bug
             if y_bug != "":
-                y_bug = "日期錯誤的名單有:" + y_bug 
+                y_bug = "日期錯誤的名單有:" + y_bug
         else:
             x_bug = "請輸入全部欄位"
 
@@ -837,6 +833,19 @@ def validate_submit(request):
         doc.Close()
         word.Quit()
         os.system(find_y)
+
+        #處理名字表
+        name_list = json.loads(request.GET.get("name", None))
+
+
+        use_word = MailMerge(os.path.join(BASE_DIR, "files", "files", "straight.docx"))
+        use_word.merge_rows('name1', name_list)
+        use_word.write(os.path.join(BASE_DIR, "files", "files", "ok_straight.docx"))
+        use_word = MailMerge(os.path.join(BASE_DIR, "files", "files", "row.docx"))
+        use_word.merge_rows('name1', name_list)
+        use_word.write(os.path.join(BASE_DIR, "files", "files", "ok_row.docx"))
+        
+
 
         data = {"result": "已經送出"}
 
